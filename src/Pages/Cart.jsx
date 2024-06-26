@@ -1,24 +1,22 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector,useDispatch } from 'react-redux';
-import { removeFromCart,updateQuantity } from '../Features/CartSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { removeFromCart, updateQuantity } from '../Features/CartSlice';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Cart = () => {
-  // const { cartItems, setCartItems } = useContext(CartContext); // Ensure we have a way to update the context
   const [isCartOpen, setIsCartOpen] = useState(true);
   const [quantities, setQuantities] = useState([]);
-
   const cartItems = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
-    // Initialize cart items from localStorage on component mount
     const storedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
     setQuantities(storedCartItems.map(item => ({ ...item, quantity: item.quantity || 1 })));
   }, []);
 
   useEffect(() => {
-    // Sync quantities state with cartItems context and localStorage
     setQuantities(cartItems.map(item => ({ ...item, quantity: item.quantity || 1 })));
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
@@ -27,40 +25,14 @@ const Cart = () => {
     setIsCartOpen(false);
   };
 
-  // const updateQuantity = (index, delta) => {
-  //   const updatedQuantities = [...quantities];
-  //   const newQuantity = updatedQuantities[index].quantity + delta;
-  //   if (newQuantity > 0) { // Ensure quantity does not go below 1
-  //     updatedQuantities[index].quantity = newQuantity;
-  //     setQuantities(updatedQuantities);
-
-  //     // Update cartItems context and localStorage
-  //     const updatedCartItems = [...cartItems];
-  //     updatedCartItems[index].quantity = newQuantity;
-  //     setCartItems(updatedCartItems);
-  //     localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-  //   }
-  // };
-
   const calculateSubtotal = () => {
     return quantities.reduce((total, item) => {
-      const cleanedPrice = item.price.replace(/[^\d.]/g, ''); // Remove non-numeric characters
+      const cleanedPrice = item.price.replace(/[^\d.]/g, '');
       const price = cleanedPrice.trim() === '' ? 0 : parseFloat(cleanedPrice);
-      const quantity = parseInt(item.quantity, 10); // Ensure quantity is an integer using radix 10
-      console.log(`Item: ${item.name}, Price: ${price}, Quantity: ${quantity}`);
+      const quantity = parseInt(item.quantity, 10);
       return isNaN(price) || isNaN(quantity) ? total : total + price * quantity;
     }, 0);
   };
-
-  // const removeItem = (index) => {
-  //   const updatedQuantities = [...quantities];
-  //   updatedQuantities.splice(index, 1);
-  //   setQuantities(updatedQuantities);
-
-  //   const updatedCartItems = cartItems.filter((_, i) => i !== index);
-  //   setCartItems(updatedCartItems);
-  //   localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-  // };
 
   const handleRemove = (index) => {
     dispatch(removeFromCart(index));
@@ -73,11 +45,16 @@ const Cart = () => {
     }
   };
 
+  const handleCheckout = () => {
+    toast.success("Order placed successfully!");
+    // Additional checkout logic can be added here
+  };
+
   return isCartOpen ? (
     <>
+      <ToastContainer />
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-50">
         <div className="w-full md:w-1/3 bg-white h-full flex flex-col shadow-lg">
-          {/* Cart Header */}
           {quantities.length === 0 ? (
             <div>
               <div className="flex justify-between items-center p-4 border-b">
@@ -101,7 +78,6 @@ const Cart = () => {
                 </Link>
               </div>
 
-              {/* Cart Items */}
               <div className="flex-grow overflow-y-auto p-4">
                 {quantities.map((item, index) => (
                   <div key={index} className="flex items-center border-b pb-4 mb-4">
@@ -117,8 +93,8 @@ const Cart = () => {
                       <div className="flex items-center mt-2">
                         <button
                           className="px-2 py-1 border rounded-md"
-                          onClick={() => updateQuantity(index, -1)}
-                          disabled={item.quantity <= 1} // Prevent quantity from going below 1
+                          onClick={() => handleUpdateQuantity(index, -1)}
+                          disabled={item.quantity <= 1}
                         >
                           -
                         </button>
@@ -142,13 +118,15 @@ const Cart = () => {
                 ))}
               </div>
 
-              {/* Cart Footer */}
               <div className="p-4 border-t">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-bold">Subtotal</h3>
                   <p className="text-lg font-bold">₹ {calculateSubtotal()}</p>
                 </div>
-                <button className="w-full bg-black text-white py-3 rounded-full">
+                <button 
+                  className="w-full bg-black text-white py-3 rounded-full"
+                  onClick={handleCheckout}
+                >
                   CHECKOUT
                 </button>
               </div>
