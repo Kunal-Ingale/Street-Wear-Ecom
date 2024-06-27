@@ -24,12 +24,11 @@ function Home() {
         clothingRef={clothingRef} 
         sneakersRef={sneakersRef} 
         accessoriesRef={accessoriesRef} />
-      <div ref={newArrivalsRef}><Card title="New Arrivals" products={Product1} /></div>
-      <div ref={clothingRef}><Card title="Clothing" products={Product2} /></div>
-      <div ref={sneakersRef}><Card title="Sneakers" products={Product3} /></div>
-      <div ref={accessoriesRef}><Card title="Accessories" products={Product4} /></div>
+      <div ref={newArrivalsRef}><Card title="New Arrivals" products={Product1} category="clothes" /></div>
+      <div ref={clothingRef}><Card title="Clothing" products={Product2} category="clothes" /></div>
+      <div ref={sneakersRef}><Card title="Sneakers" products={Product3} category="sneakers" /></div>
+      <div ref={accessoriesRef}><Card title="Accessories" products={Product4} category="accessories" /></div>
       <div ref={aboutRef}><Footer /></div>
-      
     </div>
   );
 }

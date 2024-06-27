@@ -1,51 +1,43 @@
-// src/components/ProductList.jsx
 import React, { useRef } from 'react';
-import { LuPlusCircle } from "react-icons/lu";
 import { useNavigate } from 'react-router-dom';
 
-const Card = ({ title, products, imageHeight = 'h-76' }) => {
+const Card = ({ title, products, category, imageHeight = 'h-76' }) => {
   const scrollRef = useRef(null);
   
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const handleClick = (product)=>{
-    navigate(`/product/${product.id}`,{
-      state:{
-        brand:product.brand,
-        name:product.name,
-        price:product.price,
-        image:product.image
-
+  const handleClick = (product) => {
+    navigate(`/product/${product.id}`, {
+      state: {
+        brand: product.brand,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        category: category
       }
-    })
-  }
+    });
+  };
+
   const scroll = (scrollOffset) => {
     scrollRef.current.scrollLeft += scrollOffset;
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 relative cursor-pointer ">
+    <div className="container mx-auto px-4 py-8 relative cursor-pointer">
       <h2 className="text-3xl font-bold mb-2 font-font2">{title}</h2>
       <div className="flex overflow-x-auto space-x-4 custom-scrollbar pb-2" ref={scrollRef}>
         {products.map((product) => (
           <div 
-          key={product.id} 
-          className="min-w-[300px] flex-shrink-0 bg-white p-4 rounded-lg shadow-bottom-right relative"
-          onClick={()=> handleClick(product)}>
+            key={product.id} 
+            className="min-w-[300px] flex-shrink-0 bg-white p-4 rounded-lg shadow-bottom-right relative"
+            onClick={() => handleClick(product)}>
             <img
               src={product.image}
               alt={product.name}
-              
               className={`w-64 ${imageHeight} max-h-72 object-cover mb-4`}
             />
             <div className="flex items-center justify-between mb-4">
               <div className="text-lg font-medium">{product.brand}</div>
-              <button
-                onClick={() => addToCart(product)}
-                className="px-1 py-1 rounded-md text-gray-600 scale-110 hover:scale-125 hover:text-black"
-              >
-                
-              </button>
             </div>
             <div className="text-sm text-gray-500 mb-2">{product.name}</div>
             <div className="text-sm text-gray-500 mb-2">{product.colors}</div>

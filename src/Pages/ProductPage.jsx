@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Cart from './Cart';
 import { useDispatch } from 'react-redux';
@@ -8,16 +8,18 @@ const ProductPage = () => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [isCartVisible, setIsCartVisible] = useState(false);
 
-  // const { cartItems, setCartItems } = useContext(CartContext);
-
   const location = useLocation();
   const dispatch = useDispatch();
-  const { brand, name, price, image } = location.state; // Capturing Passed States From CARD
-  
-  const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+  const { brand, name, price, image, category } = location.state || {}; // Capturing Passed States From CARD
+
+  const sizes = {
+    clothes: ['S', 'M', 'L', 'XL', 'XXL'],
+    sneakers: ['5', '6', '7', '8', '9', '10', '11'],
+    accessories: []
+  };
 
   const handleBagClick = () => {
-    if (!selectedSize) {
+    if (sizes[category]?.length > 0 && !selectedSize) {
       alert('Please select a size');
       return;
     }
@@ -32,13 +34,12 @@ const ProductPage = () => {
     dispatch(addToCart(newItem));
     setIsCartVisible(true);
   };
-  
 
   return (
     <>
       <div className="container mx-auto p-4 mt-12">
         <div className="flex flex-col md:flex-row items-center md:items-start">
-          <div className="w-full  md:w-1/2 p-4">
+          <div className="w-full md:w-1/2 p-4">
             <img src={image} alt="Product" className="w-full h-fit" />
           </div>
           <div className="w-full md:w-1/2 p-4">
@@ -57,32 +58,32 @@ const ProductPage = () => {
               <li>Front body: 100% recycled PET interlock</li>
               <li>Back body: 100% recycled PET tricot</li>
             </ul>
-            <div className="mt-4">
-              <div className="flex flex-wrap gap-2 mb-4">
-                {sizes.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`px-4 py-2 border rounded ${
-                      selectedSize === size ? 'bg-[#227be8] text-white' : 'bg-white text-gray-800'
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
+            {sizes[category]?.length > 0 && (
+              <div className="mt-4">
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {sizes[category].map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`px-4 py-2 border rounded ${
+                        selectedSize === size ? 'bg-[#227be8] text-white' : 'bg-white text-gray-800'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
-
-              <button
-                className="bg-[#0886DF] text-white p-1 rounded-md px-4 py-2 mr-2"
-                onClick={handleBagClick}
-              >
-                ADD TO BAG
-              </button>
-            </div>
+            )}
+            <button
+              className="bg-[#0886DF] text-white p-1 rounded-md px-4 py-2 mr-2"
+              onClick={handleBagClick}
+            >
+              ADD TO BAG
+            </button>
           </div>
         </div>
-        {isCartVisible && 
-        <Cart />}
+        {isCartVisible && <Cart />}
       </div>
     </>
   );

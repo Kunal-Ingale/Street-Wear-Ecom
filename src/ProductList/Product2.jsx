@@ -17,7 +17,7 @@ export const Product2 = [
     },
     {
       id: 9,
-      name: 'WMN\'S GAMMA FORCE',
+      name: 'MEN GAMMA FORCE',
       brand: 'H&M',
       price: '₹ 5,495.00',
       image: '/Images/Cloth/3.jpeg',
