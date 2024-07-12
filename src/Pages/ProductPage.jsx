@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Cart from './Cart';
 import { useDispatch } from 'react-redux';
@@ -11,6 +11,10 @@ const ProductPage = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const { brand, name, price, image, category } = location.state || {}; // Capturing Passed States From CARD
+ 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const sizes = {
     clothes: ['S', 'M', 'L', 'XL', 'XXL'],

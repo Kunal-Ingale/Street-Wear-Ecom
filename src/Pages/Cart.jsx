@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { removeFromCart, updateQuantity } from '../Features/CartSlice';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+// import Home from './Home';
 
 const Cart = () => {
   const [isCartOpen, setIsCartOpen] = useState(true);
@@ -52,6 +53,7 @@ const Cart = () => {
 
   return isCartOpen ? (
     <>
+     {/* <Home/> */}
       <ToastContainer />
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-50">
         <div className="w-full md:w-1/3 bg-white h-full flex flex-col shadow-lg">

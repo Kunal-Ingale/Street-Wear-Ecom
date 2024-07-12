@@ -1,51 +1,50 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getAuth } from "firebase/auth";
 
-const loadCartItemsFromLocalStorage = () => {
-    try {
-      const serializedState = localStorage.getItem('cartItems');
-      if (serializedState === null) {
-        return [];
-      }
-      return JSON.parse(serializedState);
-    } catch (e) {
-      console.warn("Could not load cart items from localStorage", e);
-      return [];
-    }
-  };
-  
-  const saveCartItemsToLocalStorage = (state) => {
-    try {
-      const serializedState = JSON.stringify(state);
-      localStorage.setItem('cartItems', serializedState);
-    } catch (e) {
-      console.warn("Could not save cart items to localStorage", e);
-    }
-  };
+const initialState = {
+  cartItems: [],
+};
 
-
-  const initialState = {
-    cartItems: loadCartItemsFromLocalStorage(),
-  };
-  
-  const cartSlice = createSlice({
-    name: 'cart',
-    initialState,
-    reducers: {
-      addToCart: (state, action) => {
-        state.cartItems.push(action.payload);
-        saveCartItemsToLocalStorage(state.cartItems);
-      },
-      removeFromCart: (state, action) => {
-        state.cartItems.splice(action.payload, 1);
-        saveCartItemsToLocalStorage(state.cartItems);
-      },
-      updateQuantity: (state, action) => {
-        const { index, quantity } = action.payload;
-        state.cartItems[index].quantity = quantity;
-        saveCartItemsToLocalStorage(state.cartItems);
-      },
+const cartSlice = createSlice({
+  name: 'cart',
+  initialState,
+  reducers: {
+    setCartItems: (state, action) => {
+      state.cartItems = action.payload;
     },
-  });
-  
-  export const { addToCart, removeFromCart, updateQuantity } = cartSlice.actions;
-  export default cartSlice.reducer;
+    addToCart: (state, action) => {
+      state.cartItems.push(action.payload);
+    },
+    removeFromCart: (state, action) => {
+      state.cartItems.splice(action.payload, 1);
+    },
+    updateQuantity: (state, action) => {
+      const { index, quantity } = action.payload;
+      state.cartItems[index].quantity = quantity;
+    },
+    clearCart: (state) => {
+      state.cartItems = []; // Clear the cart items
+    },
+  },
+});
+
+export const { setCartItems, addToCart, removeFromCart, updateQuantity,clearCart } = cartSlice.actions;
+export default cartSlice.reducer;
+
+// Fetch cart items from localStorage
+export const fetchCartItems = () => (dispatch) => {
+  const user = getAuth().currentUser;
+  if (user) {
+    const items = JSON.parse(localStorage.getItem(`cart-${user.uid}`)) || [];
+    dispatch(setCartItems(items));
+  }
+};
+
+// Save cart items to localStorage
+export const saveCartItems = () => (dispatch, getState) => {
+  const user = getAuth().currentUser;
+  if (user) {
+    const items = getState().cart.cartItems;
+    localStorage.setItem(`cart-${user.uid}`, JSON.stringify(items));
+  }
+};
