@@ -17,15 +17,25 @@ const Register = () => {
     const user = { name, email, password };
     try {
       dispatch(registerUser(user));
-      // After successful registration, automatically login and redirect to Home
-      // dispatch(loginUser(user));
       navigate('/login'); // Redirect to Home page after login
     } catch (error) {
       console.error('Registration failed:', error);
     }
   };
   
- 
+  const getErrorMessage = (error) => {
+    switch (error.code) {
+      case 'auth/email-already-in-use':
+        return 'This email is already in use.';
+      case 'auth/invalid-email':
+        return 'Invalid email address.';
+      case 'auth/weak-password':
+        return 'Password should be at least 6 characters.';
+      default:
+        return 'An error occurred. Please try again.';
+    }
+  };
+
 
   const handleLoginClick = () => {
     console.log('Navigating to login page...');
@@ -36,7 +46,7 @@ const Register = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-4 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-center">Register</h2>
-        {error && <p className="text-red-500 text-center">{error}</p>}
+        {error && <p className="text-red-500 text-center font-bold">{getErrorMessage(error)}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Name</label>
