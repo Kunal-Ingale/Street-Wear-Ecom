@@ -16,8 +16,9 @@ const Register = () => {
     e.preventDefault();
     const user = { name, email, password };
     try {
-      dispatch(registerUser(user));
-      navigate('/login'); // Redirect to Home page after login
+      dispatch(registerUser(user)).unwrap();
+      if(!error)  navigate('/login'); // Redirect to Home page after login
+     
     } catch (error) {
       console.error('Registration failed:', error);
     }

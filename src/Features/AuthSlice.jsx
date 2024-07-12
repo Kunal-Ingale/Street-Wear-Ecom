@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,getAuth } from 'firebase/auth';
 import { clearCart } from './CartSlice';
 import { auth } from '../Firebase/firebase';
 // const dispatch  = useDispatch();
+
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async ({ email, password }, { rejectWithValue }) => {
@@ -15,8 +16,8 @@ export const registerUser = createAsyncThunk(
       };
       return user;
     } catch (error) {
-      console.error('Registration error:', error);
-      return rejectWithValue(error.message);
+     console.log(error);
+      return rejectWithValue(error);
     }
   }
 );
@@ -24,19 +25,19 @@ export const registerUser = createAsyncThunk(
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ email, password }, { rejectWithValue }) => {
+    const auth = getAuth();
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log('UserCredential:', userCredential); 
       const user = {
         uid: userCredential.user.uid,
         email: userCredential.user.email,
-        // Add other necessary fields here
+        
       };
-      console.log('User:', user);
+    
       return user;
     } catch (error) {
-      console.error('Login error:', error);
-      return rejectWithValue(error.message);
+     
+      return rejectWithValue(error);
     }
   }
 );
@@ -50,7 +51,7 @@ export const logoutUser = createAsyncThunk(
       dispatch(clearCart()); 
       return null;
     } catch (error) {
-      console.error('Logout error:', error);
+      
       return rejectWithValue(error.message);
     }
   }
@@ -99,8 +100,8 @@ const AuthSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        
         state.user = action.payload;
+        state.error = null;
         
         localStorage.setItem('user', JSON.stringify(action.payload));
       })

@@ -1,4 +1,3 @@
-// src/components/Login.jsx
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../Features/AuthSlice';
@@ -15,7 +14,6 @@ const Login = () => {
     e.preventDefault();
     try {
       await dispatch(loginUser({ email, password })).unwrap();
-    
       navigate('/'); // Redirect to Home page after login
     } catch (error) {
       console.error('Login failed:', error);
@@ -23,6 +21,7 @@ const Login = () => {
   };
 
   const getErrorMessage = (error) => {
+    if (!error) return null;
     switch (error.code) {
       case 'auth/user-not-found':
         return 'No user found with this email.';
@@ -30,7 +29,11 @@ const Login = () => {
         return 'Incorrect password. Please try again.';
       case 'auth/invalid-email':
         return 'Invalid email address.';
+      case 'auth/invalid-credential':
+        return 'Invalid credentials provided. Please check your email and password.';
+      // Remove auth/too-many-requests handling from UI
       default:
+        console.log('Unhandled error code:', error.code);
         return 'An error occurred. Please try again.';
     }
   };
