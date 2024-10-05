@@ -1,7 +1,7 @@
 // src/components/Register.jsx
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerUser,loginUser } from '../Features/AuthSlice';
+import { registerUser } from '../Features/AuthSlice';
 import { useNavigate  } from 'react-router-dom';
 
 const Register = () => {
@@ -17,7 +17,9 @@ const Register = () => {
     const user = { name, email, password };
     try {
       await dispatch(registerUser(user)).unwrap();
-       navigate('/login'); // Redirect to Home page after login
+      //When you dispatch an asyncThunk, it returns a "thunk action" that can be used with await, but the result is a special object that includes both the outcome and some metadata. The unwrap method allows you to directly access the result of a fulfilled asyncThunk or throw an error if it was rejected.
+       
+      navigate('/login'); // Redirect to Home page after login
      
     } catch (error) {
       console.error('Registration failed:', error);

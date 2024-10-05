@@ -8,33 +8,34 @@ import Cart from './Pages/Cart.jsx';
 import Register from './Components/Register';
 import Login from './Components/Login';
 import Logout from './Components/Logout';
-import { useDispatch } from 'react-redux';
-import { checkAuthState } from './Features/AuthSlice'; // Import checkAuthState action
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkAuthState } from './Features/AuthSlice';
+// import AddProducts from './Firebase/AddProducts.jsx';
+import Checkout from './Components/Checkout.jsx';
+
+
 
 function App() {
   const dispatch = useDispatch(); 
   const loggedIn = useSelector((state) => state.auth.user);
-
 
   const [cartItems, setCartItems] = useState(() => {
     const savedCartItems = localStorage.getItem('cartItems');
     return savedCartItems ? JSON.parse(savedCartItems) : [];
   });
 
-
   useEffect(() => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
 
   useEffect(() => {
-    dispatch(checkAuthState()); // Dispatch checkAuthState action on component mount
+    dispatch(checkAuthState());
   }, [dispatch]);
 
- 
   return (
     <Router>
-       <Navbar  />      
+      <Navbar />
+      {/* <AddProducts /> */}
       <Routes>
         {!loggedIn ? (
           <>
@@ -44,10 +45,16 @@ function App() {
           </>
         ) : (
           <>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={
+              <>
+                <Home />
+              </>
+            } />
             <Route path="/product/:id" element={<ProductPage />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/logout" element={<Logout  />} />
+            <Route path="/checkout" element={<Checkout/>} />
+            
+            <Route path="/logout" element={<Logout />} />
             <Route path="*" element={<Navigate to="/" />} />
           </>
         )}

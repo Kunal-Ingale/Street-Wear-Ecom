@@ -24,7 +24,7 @@ const loadCartItemsFromLocalStorage = () => {
 
 
   const initialState = {
-    cartItems: loadCartItemsFromLocalStorage(),
+    cartItems: loadCartItemsFromLocalStorage() || [],
   };
   
   const cartSlice = createSlice({
@@ -32,7 +32,18 @@ const loadCartItemsFromLocalStorage = () => {
     initialState,
     reducers: {
       addToCart: (state, action) => {
-        state.cartItems.push(action.payload);
+        const item = action.payload;
+        const existingItem = state.cartItems.find(
+          cartItem => cartItem.name === item.name && cartItem.brand === item.brand
+        );
+
+          if (existingItem) {
+        
+         existingItem.quantity += item.quantity;
+      } else {
+        
+         state.cartItems.push(item);
+      }
         saveCartItemsToLocalStorage(state.cartItems);
       },
       removeFromCart: (state, action) => {
@@ -41,8 +52,10 @@ const loadCartItemsFromLocalStorage = () => {
       },
       updateQuantity: (state, action) => {
         const { index, quantity } = action.payload;
+      if (state.cartItems[index]) {
         state.cartItems[index].quantity = quantity;
         saveCartItemsToLocalStorage(state.cartItems);
+      }
       },
       clearCart: (state) => {
         state.cartItems = []; // Clear the cart items

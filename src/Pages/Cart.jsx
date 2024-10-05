@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeFromCart, updateQuantity } from '../Features/CartSlice';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+// import { ToastContainer, toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
+import Checkout from '../Components/Checkout';
 
 const Cart = () => {
   const [isCartOpen, setIsCartOpen] = useState(true);
   const [quantities, setQuantities] = useState([]);
   const cartItems = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
@@ -46,13 +48,12 @@ const Cart = () => {
   };
 
   const handleCheckout = () => {
-    toast.success("Order placed successfully!");
-    // Additional checkout logic can be added here
+    navigate('/Checkout');
   };
 
   return isCartOpen ? (
     <>
-      <ToastContainer />
+      
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-50">
         <div className="w-full md:w-1/3 bg-white h-full flex flex-col shadow-lg">
           {quantities.length === 0 ? (
@@ -89,7 +90,7 @@ const Cart = () => {
                     <div className="flex-grow ml-4">
                       <h3 className="font-bold">{item.brand}</h3>
                       <p className="text-gray-500">{item.name}</p>
-                      <p className="text-gray-500">Size: {item.size}</p>
+                      
                       <div className="flex items-center mt-2">
                         <button
                           className="px-2 py-1 border rounded-md"

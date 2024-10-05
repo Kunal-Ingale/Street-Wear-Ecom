@@ -9,10 +9,7 @@ const Card = ({ title, products, category, imageHeight = 'h-76' }) => {
   const handleClick = (product) => {
     navigate(`/product/${product.id}`, {
       state: {
-        brand: product.brand,
-        name: product.name,
-        price: product.price,
-        image: product.image,
+      ...product,
         category: category
       }
     });
@@ -23,13 +20,13 @@ const Card = ({ title, products, category, imageHeight = 'h-76' }) => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 relative cursor-pointer">
+    <div className="container mx-auto px-4 py-8 relative ">
       <h2 className="text-3xl font-bold mb-2 font-font2">{title}</h2>
       <div className="flex overflow-x-auto space-x-4 custom-scrollbar pb-2" ref={scrollRef}>
         {products.map((product) => (
           <div 
             key={product.id} 
-            className="min-w-[300px] flex-shrink-0 bg-white p-4 rounded-lg shadow-bottom-right relative"
+            className="min-w-[300px] flex-shrink-0 bg-white p-4 rounded-lg shadow-bottom-right relative cursor-pointer"
             onClick={() => handleClick(product)}>
             <img
               src={product.image}

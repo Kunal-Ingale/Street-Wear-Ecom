@@ -43,7 +43,9 @@ const Navbar = ({ aboutRef }) => {
     <nav className="bg-white p-5 font-font2 text-lg h-16 fixed w-full top-0 z-10">
       <div className="container mx-auto flex justify-between items-center">
         <div className="w-56">
+          <Link to={'/'}>
           <img src="Images/logo2.webp" alt="logo" />
+          </Link>
         </div>
         <div className="md:hidden flex items-center space-x-4">
           <Link to="/cart" className="w-12 mb-1">
@@ -62,7 +64,9 @@ const Navbar = ({ aboutRef }) => {
                 </Link>
               </li>
               <li>
-                <button onClick={() => scrollToSection(aboutRef)} className="text-black hover:text-gray-600">
+                <button 
+                onClick={() => scrollToSection(aboutRef)} 
+                className="text-black hover:text-gray-600">
                   About
                 </button>
               </li>
@@ -82,6 +86,7 @@ const Navbar = ({ aboutRef }) => {
             </ul>
           </div>
         )}
+        {/* Mobile */}
         <div className="hidden md:flex space-x-12">
           <Link to="/" className="text-black hover:text-[#0886DF]">
             Home

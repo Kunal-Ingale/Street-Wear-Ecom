@@ -1,41 +1,47 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Cart from './Cart';
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../Features/CartSlice';
+import { useDispatch,useSelector } from 'react-redux';
+import { addToCart, updateQuantity} from '../Features/CartSlice';
+
 
 const ProductPage = () => {
-  const [selectedSize, setSelectedSize] = useState(null);
   const [isCartVisible, setIsCartVisible] = useState(false);
 
   const location = useLocation();
   const dispatch = useDispatch();
-  const { brand, name, price, image, category } = location.state || {}; // Capturing Passed States From CARD
- 
+
+  const cartItems = useSelector(state => state.cart.cartItems);
+  const { brand, name, price, image, category } = location.state || {};
+
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
-
-  const sizes = {
-    clothes: ['S', 'M', 'L', 'XL', 'XXL'],
-    sneakers: ['5', '6', '7', '8', '9', '10', '11'],
-    accessories: []
-  };
+  }, [location.state, category]);
 
   const handleBagClick = () => {
-    if (sizes[category]?.length > 0 && !selectedSize) {
-      alert('Please select a size');
-      return;
-    }
     const newItem = {
       brand,
       name,
       price,
       image,
-      size: selectedSize,
       quantity: 1,
     };
-    dispatch(addToCart(newItem));
+  
+    const existingItem = cartItems.find(
+      cartItem => cartItem.name === newItem.name && cartItem.brand === newItem.brand
+    );
+  
+    if (existingItem) {
+      // If item exists, increase its quantity
+      dispatch(updateQuantity({
+        index: cartItems.indexOf(existingItem),
+        quantity: existingItem.quantity + 1,
+      }));
+    } else {
+      // If item does not exist, add it to the cart
+      dispatch(addToCart(newItem));
+    }
+  
     setIsCartVisible(true);
   };
 
@@ -62,25 +68,8 @@ const ProductPage = () => {
               <li>Front body: 100% recycled PET interlock</li>
               <li>Back body: 100% recycled PET tricot</li>
             </ul>
-            {sizes[category]?.length > 0 && (
-              <div className="mt-4">
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {sizes[category].map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`px-4 py-2 border rounded ${
-                        selectedSize === size ? 'bg-[#227be8] text-white' : 'bg-white text-gray-800'
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
             <button
-              className="bg-[#0886DF] text-white p-1 rounded-md px-4 py-2 mr-2"
+              className="bg-[#0886DF] text-white p-1 rounded-md px-4 py-2 mr-2 mt-4"
               onClick={handleBagClick}
             >
               ADD TO BAG

@@ -25,15 +25,13 @@ export const registerUser = createAsyncThunk(
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ email, password }, { rejectWithValue }) => {
-    const auth = getAuth();
+    //const auth = getAuth();
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = {
         uid: userCredential.user.uid,
         email: userCredential.user.email,
-        
       };
-    
       return user;
     } catch (error) {
      
@@ -85,7 +83,6 @@ const AuthSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
-       
         localStorage.setItem('user', JSON.stringify(action.payload));
       })
       .addCase(registerUser.rejected, (state, action) => {

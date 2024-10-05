@@ -31,7 +31,7 @@ const Login = () => {
         return 'Invalid email address.';
       case 'auth/invalid-credential':
         return 'Invalid credentials provided. Please check your email and password.';
-      // Remove auth/too-many-requests handling from UI
+     
       default:
         console.log('Unhandled error code:', error.code);
         return 'An error occurred. Please try again.';
