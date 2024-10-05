@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {collection, query, where, getDocs } from 'Firebase/firestore';
+import {collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../Firebase/firebase'; 
 import Card from './Card';
 
