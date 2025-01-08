@@ -37,15 +37,15 @@ const Hero = ({newArrivalsRef, clothingRef, sneakersRef, accessoriesRef}) => {
     <div className="flex flex-col md:flex-row bg-white p-5 m-2 mt-16 shadow-md border rounded-lg relative overflow-hidden h-screen">
       {/* Left Column */}
       <div className="w-full md:w-1/2 flex flex-col justify-center space-y-4 md:space-y-6 ml-8">
-        <div className="text-2xl ml-16 md:text-5xl font-bold font-font1 mb-3"
+        <div className="text-2xl ml-16 md:text-5xl font-bold font-font1 mb-1"
          style={{ lineHeight: '0' }}>Wear it with</div>
-        <div className="text-3xl md:text-6xl text-[#6f6d6dc8] font-bold font-font1 "
+        <div className="text-3xl md:text-6xl text-[#6f6d6dc8] font-bold font-font1"
          style={{ lineHeight: '1' }}>
           Style & Comfort
         </div>
         <div className='font-font3 '>
         <div 
-          className="text-gray-500 text-3xl md:text-4xl font-bold mb-4 transition duration-300 transform hover:scale-110 hover:text-[#086cdf] flex items-center after-line mt-24 "
+          className="text-gray-500 text-3xl md:text-4xl font-bold mb-4 transition duration-300 transform hover:scale-110 hover:text-[#086cdf] flex items-center after-line mt-8"
           onClick={() => scrollToSection(newArrivalsRef)}>
           <span className='cursor-pointer'>New Arrivals</span>
           <FiArrowUpRight className="ml-2" />

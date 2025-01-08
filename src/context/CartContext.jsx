@@ -1,6 +1,6 @@
-import React, { createContext, useReducer, useEffect } from 'react';
+import React, { createContext, useReducer } from 'react';
 
-// Helper functions
+//helper functions..
 const loadCartItemsFromLocalStorage = () => {
   try {
     const items = localStorage.getItem('cartItems');
@@ -19,7 +19,7 @@ const saveCartItemsToLocalStorage = (items) => {
   }
 };
 
-// Initial state
+
 const initialState = {
   cartItems: loadCartItemsFromLocalStorage(),
 };
@@ -58,7 +58,7 @@ const cartReducer = (state, action) => {
       const { id, quantity } = action.payload;
       const updatedCart = state.cartItems.map(item =>
         item.id === id ? { ...item, quantity } : item
-      );
+);
       saveCartItemsToLocalStorage(updatedCart);
       return { ...state, cartItems: updatedCart };
     }
@@ -73,10 +73,10 @@ const cartReducer = (state, action) => {
   }
 };
 
-// Create context
+
 export const CartContext = createContext();
 
-// Provider component
+
 export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
