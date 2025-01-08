@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './index.css';
 import Navbar from './Components/Navbar.jsx';
 import Home from './Pages/Home.jsx';
@@ -8,16 +8,12 @@ import Cart from './Pages/Cart.jsx';
 import Register from './Components/Register';
 import Login from './Components/Login';
 import Logout from './Components/Logout';
-import { useDispatch, useSelector } from 'react-redux';
-import { checkAuthState } from './Features/AuthSlice';
-// import AddProducts from './Firebase/AddProducts.jsx';
+import { AuthContext } from './context/AuthContext';
 import Checkout from './Components/Checkout.jsx';
 
-
-
 function App() {
-  const dispatch = useDispatch(); 
-  const loggedIn = useSelector((state) => state.auth.user);
+  const { authState } = useContext(AuthContext);
+  const { user, checked, loading } = authState;
 
   const [cartItems, setCartItems] = useState(() => {
     const savedCartItems = localStorage.getItem('cartItems');
@@ -28,37 +24,60 @@ function App() {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  useEffect(() => {
-    dispatch(checkAuthState());
-  }, [dispatch]);
+  if (!checked || loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500" />
+      </div>
+    );
+  }
 
   return (
     <Router>
-      <Navbar />
-      {/* <AddProducts /> */}
-      <Routes>
-        {!loggedIn ? (
-          <>
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="*" element={<Navigate to="/login" />} />
-          </>
-        ) : (
-          <>
-            <Route path="/" element={
-              <>
-                <Home />
-              </>
-            } />
-            <Route path="/product/:id" element={<ProductPage />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout/>} />
-            
-            <Route path="/logout" element={<Logout />} />
-            <Route path="*" element={<Navigate to="/" />} />
-          </>
-        )}
-      </Routes>
+      <div className="flex flex-col min-h-screen">
+        <Navbar cartItems={cartItems} />
+        <main className="flex-grow">
+          <Routes>
+            {/* Public Routes */}
+            <Route 
+              path="/register" 
+              element={!user ? <Register /> : <Navigate to="/" />} 
+            />
+            <Route 
+              path="/login" 
+              element={!user ? <Login /> : <Navigate to="/" />} 
+            />
+
+            {/* Protected Routes */}
+            <Route 
+              path="/" 
+              element={user ? <Home /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/product/:id" 
+              element={user ? <ProductPage setCartItems={setCartItems} /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/cart" 
+              element={user ? <Cart cartItems={cartItems} setCartItems={setCartItems} /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/checkout" 
+              element={user ? <Checkout cartItems={cartItems} setCartItems={setCartItems} /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/logout" 
+              element={user ? <Logout /> : <Navigate to="/login" />} 
+            />
+
+            {/* Fallback route */}
+            <Route 
+              path="*" 
+              element={<Navigate to={user ? "/" : "/login"} replace />} 
+            />
+          </Routes>
+        </main>
+      </div>
     </Router>
   );
 }

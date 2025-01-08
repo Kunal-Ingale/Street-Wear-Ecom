@@ -60,7 +60,7 @@ const Footer = ({ footerRef }) => {
 
       <div className="container mx-auto px-4 mt-16">
         <p className="text-center text-white text-sm">
-          &copy; 2023 Street Vogue. All rights reserved.
+          &copy; 2024 Street Vogue. All rights reserved.
         </p>
       </div>
     </footer>

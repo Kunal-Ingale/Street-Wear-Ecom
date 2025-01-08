@@ -1,16 +1,13 @@
-// src/components/Navbar.jsx
-
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { IoBagHandleOutline } from "react-icons/io5";
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { logoutUser } from '../Features/AuthSlice';
+import { AuthContext } from '../context/AuthContext';
 
 const Navbar = ({ aboutRef }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
+  const { authState, logoutUser } = useContext(AuthContext); // Access auth context
+  const { user } = authState;
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -30,9 +27,9 @@ const Navbar = ({ aboutRef }) => {
     navigate('/login');
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
-      dispatch(logoutUser());
+      await logoutUser();
       navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
@@ -44,7 +41,7 @@ const Navbar = ({ aboutRef }) => {
       <div className="container mx-auto flex justify-between items-center">
         <div className="w-56">
           <Link to={'/'}>
-          <img src="Images/logo2.webp" alt="logo" />
+            <img src="Images/logo2.webp" alt="logo" />
           </Link>
         </div>
         <div className="md:hidden flex items-center space-x-4">
@@ -64,9 +61,10 @@ const Navbar = ({ aboutRef }) => {
                 </Link>
               </li>
               <li>
-                <button 
-                onClick={() => scrollToSection(aboutRef)} 
-                className="text-black hover:text-gray-600">
+                <button
+                  onClick={() => scrollToSection(aboutRef)}
+                  className="text-black hover:text-gray-600"
+                >
                   About
                 </button>
               </li>
@@ -86,23 +84,26 @@ const Navbar = ({ aboutRef }) => {
             </ul>
           </div>
         )}
-        {/* Mobile */}
+        {/* Desktop */}
         <div className="hidden md:flex space-x-12">
           <Link to="/" className="text-black hover:text-[#0886DF]">
             Home
           </Link>
-          <button onClick={() => scrollToSection(aboutRef)} className="text-black hover:text-[#0886DF]">
-            About
-          </button>
           <Link to="/cart" className="w-12 mb-1">
             <IoBagHandleOutline size={24} />
           </Link>
           {!user ? (
-            <button onClick={handleLogin} className="bg-[#0886DF] px-2 text-white hover:text-white rounded-md hover:shadow-lg">
+            <button
+              onClick={handleLogin}
+              className="bg-[#0886DF] px-2 text-white hover:text-white rounded-md hover:shadow-lg"
+            >
               Login
             </button>
           ) : (
-            <button onClick={handleLogout} className="bg-[#0886DF] px-2 text-white hover:text-white rounded-md hover:shadow-lg">
+            <button
+              onClick={handleLogout}
+              className="bg-[#0886DF] px-2 text-white hover:text-white rounded-md hover:shadow-lg"
+            >
               Logout
             </button>
           )}
@@ -111,4 +112,5 @@ const Navbar = ({ aboutRef }) => {
     </nav>
   );
 };
+
 export default Navbar;

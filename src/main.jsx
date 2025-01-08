@@ -1,16 +1,19 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-import { Provider } from 'react-redux';
-import store from './Store.jsx';
+import React from 'react';
+import ReactDOM from 'react-dom/client'; // Use `react-dom/client` instead of `react-dom`
+import App from './App';
+import { CartProvider } from './context/CartContext';
+import { AuthProvider } from './context/AuthContext';
 
+// Create the root element
+const root = ReactDOM.createRoot(document.getElementById('root'));
 
-
-ReactDOM.createRoot(document.getElementById('root')).render(
+// Render the app with providers
+root.render(
   <React.StrictMode>
-     <Provider store={store}>
-    <App />
-    </Provider>
+    <AuthProvider>
+      <CartProvider>
+        <App />
+      </CartProvider>
+    </AuthProvider>
   </React.StrictMode>
-)
+);

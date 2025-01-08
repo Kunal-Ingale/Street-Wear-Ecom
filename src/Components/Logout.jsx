@@ -1,27 +1,27 @@
-// src/components/Logout.js
-import React from 'react';
-import { useDispatch } from 'react-redux';
-import { logoutUser } from '../Features/AuthSlice';
-import { Navigate, useNavigate } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Logout = () => {
-  const dispatch = useDispatch();
+  const { logoutUser } = useContext(AuthContext); // Using context
   const navigate = useNavigate();
 
-  const handleLogout = async() => {
-    await dispatch(logoutUser()).unwrap();
-    navigate('/login');
-    
+  const handleLogout = async () => {
+    try {
+      await logoutUser(); // Call logoutUser function from context
+      navigate('/login'); // Redirect to login page after successful logout
+    } catch (err) {
+      console.error('Logout failed:', err.message);
+    }
   };
 
   return (
-  <button 
-  onClick={handleLogout} 
-  className="text-black hover:text-[#0886DF] bg-white  rounded-md"
->
-  Logout
-</button>
-  )
+    <div>
+      <button onClick={handleLogout} className="py-2 px-4 bg-red-500 text-white rounded-md">
+        Logout
+      </button>
+    </div>
+  );
 };
 
 export default Logout;

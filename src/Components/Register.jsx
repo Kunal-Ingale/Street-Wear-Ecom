@@ -1,99 +1,94 @@
-// src/components/Register.jsx
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { registerUser } from '../Features/AuthSlice';
-import { useNavigate  } from 'react-router-dom';
+import React, { useState, useContext, useEffect } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const dispatch = useDispatch();
-  const navigate =  useNavigate (); 
-  const { loading, error } = useSelector((state) => state.auth);
+  const { authState, registerUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { loading, error, user } = authState;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const user = { name, email, password };
+    if (!name || !email || !password) {
+      alert('All fields are required!');
+      return;
+    }
+    
     try {
-      await dispatch(registerUser(user)).unwrap();
-      //When you dispatch an asyncThunk, it returns a "thunk action" that can be used with await, but the result is a special object that includes both the outcome and some metadata. The unwrap method allows you to directly access the result of a fulfilled asyncThunk or throw an error if it was rejected.
-       
-      navigate('/login'); // Redirect to Home page after login
-     
-    } catch (error) {
-      console.error('Registration failed:', error);
-    }
-  };
-  
-  const getErrorMessage = (error) => {
-    switch (error.code) {
-      case 'auth/email-already-in-use':
-        return 'This email is already in use.';
-      case 'auth/invalid-email':
-        return 'Invalid email address.';
-      case 'auth/weak-password':
-        return 'Password should be at least 6 characters.';
-      default:
-        return 'An error occurred. Please try again.';
+      await registerUser(email, password);
+      navigate('/login');
+    } catch (err) {
+      console.error('Registration failed:', err.message);
     }
   };
 
-
-  const handleLoginClick = () => {
-    console.log('Navigating to login page...');
-    navigate('/login');
-  };
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-4 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-center">Register</h2>
-        {error && <p className="text-red-500 text-center font-bold">{getErrorMessage(error)}</p>}
+        {error && <p className="text-red-500 text-center">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
             <input
+              id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Name"
-              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md"
               required
+              disabled={loading}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
             <input
+              id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md"
               required
+              disabled={loading}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
             <input
+              id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md"
               required
+              disabled={loading}
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`w-full py-2 text-white rounded-md ${loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'}`}
           >
             {loading ? 'Registering...' : 'Register'}
           </button>
-          <span className='text-gray-500 text-center cursor-pointer ml-24'
-          onClick={handleLoginClick }>Already Registered? Login</span>
         </form>
+        <button
+          onClick={() => navigate('/login')}
+          className="w-full text-sm text-gray-500 hover:text-gray-700"
+          disabled={loading}
+        >
+          Already have an account? Login
+        </button>
       </div>
     </div>
   );
